@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Data & Artifacts
+data/raw_measurements.csv
+.agent/logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
