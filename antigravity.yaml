@@ -1,6 +1,6 @@
-# Google Antigravity Configuration for sigma-lattice-auditor
+# Google Antigravity Configuration for Kaizen-Sigma Methodology
 pipeline:
-  name: Six Sigma Quality Audit
+  name: Kaizen-Sigma Quality Audit
   on: [push, pull_request]
 
 environments:
@@ -17,11 +17,15 @@ steps:
       pip install --upgrade pip
       pip install .
 
-  - name: Generate Synthetic Test Data
-    run: python tests/test_data_generator.py
+  - name: Kaizen Data Generation & Standardization
+    run: |
+      python scripts/audit_engine/kaizen_data_gen.py
+      python scripts/audit_engine/pdca_act.py
 
-  - name: Statistical Audit (Stop the Line)
-    run: python gatekeeper.py
+  - name: Integrated Audit (Stop the Line)
+    run: |
+      export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+      python gatekeeper.py
     failure_policy:
       action: "terminate_immediately"
       on_failure:
@@ -29,9 +33,16 @@ steps:
           url: "${AUDIT_WEBHOOK_URL}"
           payload:
             event: "QUALITY_GATE_FAILURE"
-            project: "sigma-lattice-auditor"
+            project: "kaizen-sigma-methodology"
             measured_cpk: "${env.MEASURED_CPK}"
-            attribution: "Developed by Rodrigo Collazo (Purmamarca)"
+            measured_pce: "${env.MEASURED_PCE}"
+            attribution: "Standardized by Purmamarca"
+
+  - name: Visualization & Reporting
+    run: |
+      export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+      python scripts/audit_engine/kaizen_dashboard.py
+      python scripts/audit_engine/generate_report.py
 
   - name: Security & Linting
     run: |
@@ -39,6 +50,12 @@ steps:
       bandit -r src/
 
 outputs:
-  - path: data/quality_audit_results.csv
+  - path: data/KAIZEN_SIGMA_REPORT.md
     type: artifact
-    description: "Final Six Sigma audit report for the commit"
+    description: "Integrated Kaizen-Sigma Audit Report"
+  - path: data/visuals/kaizen_dashboard.png
+    type: artifact
+    description: "Kaizen Visual Dashboard"
+  - path: methodology/kaizen_events/continuous_improvement_log.csv
+    type: artifact
+    description: "Historical Kaizen Event Log"

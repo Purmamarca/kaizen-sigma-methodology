@@ -23,7 +23,10 @@ This repository implements the **Continuous Improvement Loop (PDCA)** as a core 
 
 An automated audit engine that models the evolution of process maturity.
 
-- **`kaizen_data_gen.py`**: Generates synthetic audit logs. It simulates the exponential decay of waste (**Muda**) and the tightening of process variance over time.
+- **`kaizen_data_gen.py`**: Generates synthetic audit logs.
+- **`pdca_act.py`**: Automatically updates the "Standardization Wedge" when performance peaks are reached.
+- **`kaizen_dashboard.py`**: Generates visual performance charts (Muda Decay, PCE Progression).
+- **`generate_report.py`**: Creates a comprehensive `KAIZEN_SIGMA_REPORT.md` artifact.
 
 ### 📜 Methodology & Standards (`methodology/`)
 
@@ -46,30 +49,36 @@ pip install -r requirements.txt
 
 ### 🛠️ Running the Kaizen Cycle
 
-1.  **Generate Audit Data**:
+1.  **Execute the Integrated Audit Pipeline**:
 
     ```powershell
+    # Generate data and evaluate against standards
     python scripts/audit_engine/kaizen_data_gen.py
+    $env:PYTHONPATH = "src"; python gatekeeper.py
     ```
 
-    This will update `methodology/kaizen_events/continuous_improvement_log.csv` with 150 iterations of improvement data.
-
-2.  **Verify Standards**:
-    Review `methodology/standard_work/process_standards.md` to compare current performance against established stability thresholds (Target Mean: 8.5h).
+2.  **Generate Visual Reports**:
+    ```powershell
+    python scripts/audit_engine/kaizen_dashboard.py
+    python scripts/audit_engine/generate_report.py
+    ```
+    Review `data/KAIZEN_SIGMA_REPORT.md` for a full breakdown of Six Sigma and Kaizen metrics.
 
 ---
 
 ## 📈 Quality Metrics Verified
 
+- **Cpk (Process Capability)**: Statistical rigor to ensure < 0.1% defect rate.
 - **PCE % (Process Cycle Efficiency)**: Ratio of value-add time to total lead time.
-- **Sigma Stability**: Automated outlier detection based on the 1.2h Standard Deviation limit.
-- **Muda Reduction**: Tracking the reduction of non-value-add hours across iterations.
+- **Muda Reduction**: Exponential decay tracking of non-value-add hours.
+- **Standardization Wedge**: Automated protection against quality backsliding.
 
 ---
 
 ## 🛡️ Governance & Safety
 
-Powered by the **Antigravity AI Auditor**, ensuring that every code refactor adheres to the **Standardization Wedge** to prevent any regression in process quality.
+Powered by the **Antigravity AI Auditor**, enforcing a **"Stop-the-Line"** policy via the `antigravity.yaml` CI configuration.
+Every commit is audited for statistical stability and process efficiency before being merged.
 
 ---
 
